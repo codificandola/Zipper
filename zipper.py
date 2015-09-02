@@ -15,15 +15,15 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-# Zipper V1.0
+#    Zipper V1.1
 
-import os, tarfile, threading, timeit
+import os, tarfile, threading, timeit, subprocess, logging
 
-work_dir = "/home/ancifuentes/Documents/Bacula/pdf/"
-dest_dir = "/home/ancifuentes/Documents/Bacula/test/"
+#work_dir = "/home/ancifuentes/Documents/Bacula/pdf/"
+#dest_dir = "/home/ancifuentes/Documents/Bacula/test/"
 
-# work_dir="/home/ancifuentes/Documents/wars_tomcat5_20150318/"
-# dest_dir= "/home/ancifuentes/Documents/wars_comprimidos/"
+work_dir="/home/ancifuentes/Documents/wars_tomcat5_20150318/"
+dest_dir= "/home/ancifuentes/Documents/wars_comprimidos/"
 
 ext = ".gz"
 files = []
@@ -38,12 +38,11 @@ class myThread(threading.Thread):
 
     def run(self):
         start = timeit.default_timer()
-        print "Starting " + self.name
-
+        logging.info("Starting " + self.name)
         compress(dest_dir, self.name, self.files)
-
         stop = timeit.default_timer()
-        print self.name + " ha terminado en  " + str(stop - start) + " segundos"
+        logging.info(self.name + " finished in  " + str(stop - start) + " seconds")
+
 
 
 # print "Exiting " + self.name
@@ -51,19 +50,32 @@ class myThread(threading.Thread):
 
 def compress(dest_dir, thread_name, files):
     for f in files:
-        tar = tarfile.open(dest_dir + f + ".gz", "w:gz")
-        print "Compressing " + f + " in " + thread_name + "\n"
+        st = timeit.default_timer()
+        tar = tarfile.open(dest_dir + f + ".gz", "w:gz", compresslevel=1)
         tar.add(f)
         tar.close()
+        fn = timeit.default_timer()
+        logging.info("Compressing " + f + " in " + thread_name + " finished in " + str(fn - st) + " seconds\n" )
 
 
-os.chdir(work_dir)
-allfiles = os.listdir(work_dir)
-# Parto String de archivos en 2
-files1 = allfiles[:len(allfiles) / 2]
-files2 = allfiles[len(allfiles) / 2:]
+def main():
+    logging.basicConfig(filename='zipper.log', level=logging.INFO)
+    logging.info('Started Main')
 
-thread1 = myThread(1, "Thread-1", files1)
-thread2 = myThread(2, "Thread-2", files2)
-thread1.start()
-thread2.start()
+    os.chdir(work_dir)
+    allfiles = os.listdir(work_dir)
+    # Parto String de archivos en 2
+    files1 = allfiles[:len(allfiles) / 2]
+    files2 = allfiles[len(allfiles) / 2:]
+
+    thread1 = myThread(1, "Thread-1", files1)
+    thread2 = myThread(2, "Thread-2", files2)
+    thread1.start()
+    thread2.start()
+
+    logging.info('Finished Main')
+
+
+
+if __name__ == "__main__":
+   main()

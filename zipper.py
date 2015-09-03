@@ -15,7 +15,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-#    Zipper V1.1
+#    Zipper V1.2
 
 import os, tarfile, threading, timeit, subprocess, logging, gzip
 

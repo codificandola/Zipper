@@ -17,7 +17,7 @@
 #
 #    Zipper V1.1
 
-import os, tarfile, threading, timeit, subprocess, logging
+import os, tarfile, threading, timeit, subprocess, logging, gzip
 
 #work_dir = "/home/ancifuentes/Documents/Bacula/pdf/"
 #dest_dir = "/home/ancifuentes/Documents/Bacula/test/"
@@ -51,9 +51,16 @@ class myThread(threading.Thread):
 def compress(dest_dir, thread_name, files):
     for f in files:
         st = timeit.default_timer()
-        tar = tarfile.open(dest_dir + f + ".gz", "w:gz", compresslevel=1)
-        tar.add(f)
-        tar.close()
+#        tar = tarfile.open(dest_dir + f + ".gz", "w:gz", compresslevel=1)
+#        tar.add(f)
+#        tar.close()
+
+        in_data = open(f,"rb").read()
+        out_gz = dest_dir+ f +".gz"
+        gzf = gzip.open(out_gz,"wb",1)
+        gzf.write(in_data)
+        gzf.close()
+
         fn = timeit.default_timer()
         logging.info("Compressing " + f + " in " + thread_name + " finished in " + str(fn - st) + " seconds\n" )
 

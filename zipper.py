@@ -19,11 +19,11 @@
 
 import os, tarfile, threading, timeit, subprocess, logging, gzip
 
-#work_dir = "/home/ancifuentes/Documents/Bacula/pdf/"
-#dest_dir = "/home/ancifuentes/Documents/Bacula/test/"
+work_dir ="/share/BACKUP/ayer/DB/PROD/"
+dest_dir = work_dir
 
-work_dir="/home/ancifuentes/Documents/wars_tomcat5_20150318/"
-dest_dir= "/home/ancifuentes/Documents/wars_comprimidos/"
+#work_dir="/home/ancifuentes/Documents/wars_tomcat5_20150318/"
+#dest_dir= "/home/ancifuentes/Documents/wars_comprimidos/"
 
 ext = ".gz"
 files = []
@@ -51,15 +51,17 @@ class myThread(threading.Thread):
 def compress(dest_dir, thread_name, files):
     for f in files:
         st = timeit.default_timer()
-#        tar = tarfile.open(dest_dir + f + ".gz", "w:gz", compresslevel=1)
-#        tar.add(f)
-#        tar.close()
+        tar = tarfile.open(dest_dir + f + ".gz", "w:gz", compresslevel=1)
+        tar.add(f)
+        tar.close()
+        os.remove(f)
 
-        in_data = open(f,"rb").read()
-        out_gz = dest_dir+ f +".gz"
-        gzf = gzip.open(out_gz,"wb",1)
-        gzf.write(in_data)
-        gzf.close()
+
+#        in_data = open(f,"rb").read()
+#        out_gz = dest_dir+ f +".gz"
+#         gzf = gzip.open(out_gz,"wb")
+#       gzf.write(in_data)
+#       gzf.close()
 
         fn = timeit.default_timer()
         logging.info("Compressing " + f + " in " + thread_name + " finished in " + str(fn - st) + " seconds\n" )
@@ -72,13 +74,16 @@ def main():
     os.chdir(work_dir)
     allfiles = os.listdir(work_dir)
     # Parto String de archivos en 2
-    files1 = allfiles[:len(allfiles) / 2]
-    files2 = allfiles[len(allfiles) / 2:]
 
+    files0 = allfiles[:len(allfiles) / 2]
+    files1 = allfiles[len(allfiles) / 2:]
+
+    thread0 = myThread(0, "Thread-0", files0)
     thread1 = myThread(1, "Thread-1", files1)
-    thread2 = myThread(2, "Thread-2", files2)
+
+    thread0.start()
     thread1.start()
-    thread2.start()
+
 
     logging.info('Finished Main')
 

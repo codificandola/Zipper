@@ -22,9 +22,6 @@ import os, tarfile, threading, timeit, subprocess, logging, gzip
 work_dir ="/share/BACKUP/ayer/DB/PROD/"
 dest_dir = work_dir
 
-#work_dir="/home/ancifuentes/Documents/wars_tomcat5_20150318/"
-#dest_dir= "/home/ancifuentes/Documents/wars_comprimidos/"
-
 ext = ".gz"
 files = []
 
@@ -45,8 +42,6 @@ class myThread(threading.Thread):
 
 
 
-# print "Exiting " + self.name
-
 
 def compress(dest_dir, thread_name, files):
     for f in files:
@@ -56,12 +51,6 @@ def compress(dest_dir, thread_name, files):
         tar.close()
         os.remove(f)
 
-
-#        in_data = open(f,"rb").read()
-#        out_gz = dest_dir+ f +".gz"
-#         gzf = gzip.open(out_gz,"wb")
-#       gzf.write(in_data)
-#       gzf.close()
 
         fn = timeit.default_timer()
         logging.info("Compressing " + f + " in " + thread_name + " finished in " + str(fn - st) + " seconds\n" )
